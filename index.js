@@ -17,8 +17,8 @@ const openAI = new OpenAI({
     apiKey: "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",
 });
 
-app.listen(3000, () => {
- console.log(`Server running on port 3000`);
+app.listen(8080, () => {
+ console.log(`Server running on port 8080`);
 });
 
 var moreInfo;
@@ -66,7 +66,6 @@ app.get("/interaction", async (req, res) => {
         const cases = await promises.readFile("./cases.json", {encoding: "utf8"}).then((data) => { return JSON.parse(data); });
         const attacks = await promises.readFile("./attacks.json", {encoding: "utf8"}).then((data) => { return JSON.parse(data); });
         if (cases[req.query.caseId] && attacks[req.query.attackId]) {
-                console.log(cases[req.query.caseId].senario);
                 const damage = await openAI.chat.completions.create({
                     messages: [
                         {role:"system", name:"instructor", content: "You are facilitating a game about civics. You will be given a senario based on a real life case. You will also be given an attack, which is an article or amendment of the constitution. You must choose a damage level between '1' and '100' based on how releveant the attack is to the senario. Your response will be only an integer within the specified range."}, 
