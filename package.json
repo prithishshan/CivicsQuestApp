@@ -10,5 +10,8 @@
   "type": "module",
   "devDependencies": {
     "pdfjs-dist": "^4.0.189"
+  },
+  "scripts": {
+    "build": "node index.js"
   }
 }
