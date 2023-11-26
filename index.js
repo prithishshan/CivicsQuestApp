@@ -16,11 +16,11 @@ dotenv.config();
 
 const openAI = new OpenAI({
     organization: "org-GeYYLqj76eyVILZQMYl1nc3x",
-    apiKey: process.env.OPENAI_API_KEY,
+    apiKey: "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",
 });
 
-app.listen(process.env.PORT, () => {
- console.log(`Server running on port ${process.env.PORT}`);
+app.listen(3000, () => {
+ console.log(`Server running on port 3000`);
 });
 
 var moreInfo;
