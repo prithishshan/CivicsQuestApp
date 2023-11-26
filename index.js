@@ -16,7 +16,7 @@ dotenv.config();
 
 const openAI = new OpenAI({
     organization: "org-GeYYLqj76eyVILZQMYl1nc3x",
-    apiKey: process.env.OPENAI_KEY,
+    // apiKey: process.env.OPENAI_API_KEY,
 });
 
 app.listen(process.env.PORT, () => {
