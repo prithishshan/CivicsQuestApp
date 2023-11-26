@@ -4,7 +4,6 @@ import BodyParser from "body-parser";
 import cors from "cors";
 // // import sqlite from "sqlite3";
 import { promises } from "fs";
-import dotenv from "dotenv";
 
 // const sql = sqlite.verbose();
 var app = express();
@@ -12,7 +11,6 @@ var app = express();
 // Middleware to parse JSON data
 app.use(BodyParser.json());
 app.use(cors());
-dotenv.config();
 
 const openAI = new OpenAI({
     organization: "org-GeYYLqj76eyVILZQMYl1nc3x",
