@@ -44,10 +44,44 @@ app.get("/testUser", async (req, res) => {
 });
 app.get("/case", async (req, res) => {
     const cases = await promises.readFile("./cases.json", {encoding: "utf8"}).then((data) => { return JSON.parse(data); });
-    if (req.query.won) {
+    if (req.query.won && req.query.id) {
+        let db = new sql.Database("./users.db");
+        db.get(`SELECT id, won, lost FROM users WHERE id = '${req.query.userId}';`, (err, row) => {
+            if (err) {
+                console.log(err);
+                // Handle the error, e.g., send an error response
+                res.status(500).json({error: "Error retrieving data"});
+            } else {
+                if (row) {
+                    if (req.query.won == "true") {
+                        var losses = JSON.parse(row.lost);
+                        var wins = JSON.parse(row.won);
+                        wins.push(req.query.id);
+                        losses = losses.filter(loss => loss !== req.query.id);
 
+                        // console.log(wins, losses, row.id);
+                        db.run(`UPDATE users SET won = '${JSON.stringify(wins)}', lost = '${JSON.stringify(losses)}' WHERE id = '${row.id}'`);
+                        res.status(200).json({message: "Case won"});
+                    } else if (req.query.won == "false") {
+                        var losses = JSON.parse(row.lost);
+                        var wins = JSON.parse(row.won);
+                        losses.push(req.query.id);
+                        wins = wins.filter(win => win !== req.query.id);
+
+                        // console.log(wins, losses, row.id);
+                        db.run(`UPDATE users SET won = '${JSON.stringify(wins)}', lost = '${JSON.stringify(losses)}' WHERE id = '${row.id}'`);
+                        res.status(200).json({message: "Case lost"});
+                    } else {
+                        res.status(200).json({error: "Invalid won value"});
+                    }
+                } else {
+                    // Handle the case where no matching user is found
+                    res.status(404).json({error: "User not found"});
+                }
+            }
+        });
     } else {
-      if (req.query.id) {
+        if (req.query.id) {
             if (cases[req.query.id]){
                 res.status(200).json(cases[req.query.id]);
                 updateMoreInfo(cases[req.query.id], true);
@@ -58,18 +92,17 @@ app.get("/case", async (req, res) => {
                 let db = new sql.Database("./users.db");
                 db.get(`SELECT won, lost FROM users WHERE id = '${req.query.userId}';`, (err, row) => {
                     if (err) {
-                        console.log(err);
                         // Handle the error, e.g., send an error response
                         res.status(500).json({error: "Error retrieving data"});
                     } else {
                         if (row) {
                             const won = JSON.parse(row.won);
                             const lost = JSON.parse(row.lost);
+                            // console.log(won, lost);
                             cases.forEach(caseSelected => {
-                                console.log(won.includes(caseSelected.id));
-                                if (won.includes(caseSelected.id)){
+                                if (won.includes(caseSelected.id.toString())){
                                     caseSelected.state = "won";
-                                } else if (lost.includes(caseSelected.id)) {
+                                } else if (lost.includes(caseSelected.id.toString())) {
                                     caseSelected.state = "lost";
                                 } else {
                                     caseSelected.state = "unplayed";
