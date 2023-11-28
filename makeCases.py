@@ -40,6 +40,7 @@ for index, case in oldCases.iterrows():
             for resource in caseResources:
                 if "pdf" in resource:
                     caseLink = resource["pdf"]
+                    casePageLink = resource["url"]
                     pdfNotFound = False
                     break
             resCount += 1
@@ -66,7 +67,7 @@ for index, case in oldCases.iterrows():
 
     print("Generate Case: y/n")
     if input().lower() == "y":
-        messages = [{"role":"system", "name":"instructor", "content":"Your job is to take the information you are given about an overruled supreme court decision, and generate a short realistic senario that involves the case you are provided with. The generated case will be used as content for a game, where players will attempt to remedy it with works of legislation and political work that their characters were involved with at some point. Your response must be very concise."}, {"role":"system", "name":"pdfcontents", "content":casePdfText}]
+        messages = [{"role":"system", "name":"instructor", "content":"Your job is to take the information you are given about an overruled supreme court decision, and generate a short realistic scenario that involves the case you are provided with. The generated case will be used as content for a game, where players will attempt to remedy it with works of legislation and political work that their characters were involved with at some point. Your response must be very concise."}, {"role":"system", "name":"pdfcontents", "content":casePdfText}]
         completion = openai.chat.completions.create(messages=messages, model="gpt-4-1106-preview", max_tokens=200, n=1, temperature=0.9)
         print(completion.choices[0].message.content)
         case = {
@@ -75,7 +76,8 @@ for index, case in oldCases.iterrows():
             "year": case["Year of Overruling Decision"],
             "title": caseTitle,
             "pdfLink": caseLink,
-            "senario": completion.choices[0].message.content,
+            "pageLink": casePageLink,
+            "scenario": completion.choices[0].message.content,
             "isLaw": "false",
         }
         cases.append(case)
